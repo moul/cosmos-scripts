@@ -6,10 +6,17 @@ outputs/forks-cosmos-sdk.csv:
 
 outputs/commiters-cosmos-sdk.csv: outputs/forks-cosmos-sdk.csv
 	mkdir -p .tmp
-	for repo in cosmos/cosmos-sdk `cat $< | cut -d, -f1`; do \
-		echo $$repo; \
-		./active-commiters-for-repo.sh $$repo | tee .tmp/commiters-`echo $$repo | tr / -`.csv; \
-	done
-	cat .tmp/commiters-*.csv | grep -v repo,login | sort -u -t , -k 2,2 | sed 's/^[^,]*,//' | sed 's/,[^,]*,[^,]*$$//' > $@.tmp
+	#for repo in cosmos/cosmos-sdk `cat $< | cut -d, -f1`; do \
+	#	echo $$repo; \
+	#	./active-commiters-for-repo.sh $$repo | tee .tmp/commiters-`echo $$repo | tr / -`.csv; \
+	#done
+
+	cat .tmp/commiters-*.csv | \
+		grep '[^,].*,[^,].*,[^,].*,[^,].*$$' | \
+		grep -v repo,login | \
+		sort -u -t , -k 2,2 | \
+		sed 's/^[^,]*,//' | \
+		sed 's/,[^,]*,[^,]*$$//' > $@.tmp
 	mv $@.tmp $@
-	rm -f .tmp/commiters-*.csv
+
+	#rm -f .tmp/commiters-*.csv
