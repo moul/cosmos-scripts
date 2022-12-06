@@ -4,8 +4,7 @@
 # Example: ./interesting-repos-forks.sh cosmos/cosmos-sdk
 # Requirements: 'hub'
 #
-# This script lookups existing forks of a repo and create a CSV file with main informations.
-
+# This script lookups existing forks of a repo and create a CSV file.
 
 REPO=$1
 
