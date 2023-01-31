@@ -1,9 +1,23 @@
 all: \
 	outputs/commiters-cosmos-sdk.csv outputs/commiters-tendermint.csv \
 	outputs/forks-cosmos-sdk.csv outputs/forks-tendermint.csv \
-	outputs/prs-cosmos-sdk.csv outputs/prs-tendermint.csv
+	outputs/prs-cosmos-sdk.csv outputs/prs-tendermint.csv \
+	outputs/top-prs-authors-cosmos-sdk.csv outputs/top-prs-authors-tendermint.csv
 
 # COSMOSSDK
+outputs/top-prs-authors-cosmos-sdk.csv: outputs/prs-cosmos-sdk.csv
+	echo "author,prs,first_date" > $@.tmp
+	cat outputs/prs-cosmos-sdk.csv | \
+		sed 1d | \
+		tr -s ',' ' ' | \
+		sort -k3,3 | \
+		awk '{print $$5,$$3}' | \
+		uniq -c -f1 | \
+		sort -rn | \
+		awk '{if($$1>1){print $$3,$$1,$$2}}' | \
+		tr -s ' ' ',' >> $@.tmp
+	mv $@.tmp $@
+
 outputs/prs-cosmos-sdk.csv:
 	./prs-authors-and-forks.sh cosmos/cosmos-sdk | tee $@.tmp
 	mv $@.tmp $@
@@ -53,4 +67,17 @@ outputs/commiters-tendermint.csv:
 		| sed 's/,[^,]*,[^,]*$$//' \
 		| awk -F , '{if(NF==2){print $$N}else{print "noname,"$$1}}' \
 		> $@.tmp
+	mv $@.tmp $@
+
+outputs/top-prs-authors-tendermint.csv: outputs/prs-tendermint.csv
+	echo "author,prs,first_date" > $@.tmp
+	cat outputs/prs-tendermint.csv | \
+		sed 1d | \
+		tr -s ',' ' ' | \
+		sort -k3,3 | \
+		awk '{print $$5,$$3}' | \
+		uniq -c -f1 | \
+		sort -rn | \
+		awk '{if($$1>1){print $$3,$$1,$$2}}' | \
+		tr -s ' ' ',' >> $@.tmp
 	mv $@.tmp $@
