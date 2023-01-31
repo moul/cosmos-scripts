@@ -1,14 +1,18 @@
 GAIAD ?= gaiad
 GAIAD_HOME ?= $(HOME)/.gaia
 
-all: extracts
+all: extracts votes
 
+
+votes:
+	mkdir -p votes
+	$(GAIAD) query gov proposal 82 83 --output=json
 
 EXTRACTS = auth.accounts authz.authorization bank.balances bank.supply \
-        capability.owners distribution feegrant.allowances \
-        gov.proposals ibc.channel_genesis ibc.client_genesis ibc.connection_genesis \
-        interchainaccounts liquidity slashing staking.delegations staking.redelegations \
-        staking.unbonding_delegations staking.validators transfer
+				capability.owners distribution feegrant.allowances \
+				gov.proposals ibc.channel_genesis ibc.client_genesis ibc.connection_genesis \
+				interchainaccounts liquidity slashing staking.delegations staking.redelegations \
+				staking.unbonding_delegations staking.validators transfer
 EXTRACTS_JSON = $(addprefix extracts/,$(addsuffix .json,$(EXTRACTS)))
 extracts: $(EXTRACTS_JSON)
 $(EXTRACTS_JSON): export.json
